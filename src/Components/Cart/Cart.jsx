@@ -1,0 +1,44 @@
+import React from 'react'
+import {useContext} from 'react'
+import cartContext from '../../store/cart-context'
+import CartItem  from './CartItem'
+import './Cart.css'
+import Modal from '../Ui/Modal'
+
+function Cart(props) {
+     const cartCtx = useContext(cartContext)
+     const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`
+    const hasItems = cartCtx.items.length > 0 
+
+    const cartItemRemoveHandler= (id)=>{
+        cartCtx.removeItem(id)
+    }
+
+    const cartItemAddHandler =(item)=>{
+        cartCtx.addItem({...item , amount : 1})
+    }
+
+    const cartitems =<ul className="cart-items"> {cartCtx.items.map(item => <CartItem
+         key ={item.id} 
+         name ={item.name}
+         amount ={item.amount}
+         price ={item.price}
+         onAdd = {cartItemAddHandler.bind(null , item.id)} 
+         onRemove = {cartItemRemoveHandler.bind( null, item)}
+         />)}</ul>
+    return (
+        <Modal onClose={props.onClose}>
+            {cartitems}
+            <div className ="total">
+                <span>total amount</span>
+                <span> {totalAmount}</span>
+            </div>
+            <div className ="actions">
+                <button className ="button--alt" onClick ={props.onClose}>Close</button>
+                {hasItems && <button className ="button">Order</button>}
+            </div>
+        </Modal>
+    )
+}
+
+export default Cart
